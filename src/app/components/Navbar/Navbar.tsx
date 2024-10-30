@@ -2,6 +2,8 @@
 
 import React from 'react';
 
+import { useRouter } from 'next/navigation';
+
 import { AppBar, IconButton, Menu } from '@mui/material';
 import { Box, Container, useMediaQuery } from '@mui/system';
 
@@ -11,12 +13,17 @@ import useScrollPosition from '@/app/ustils/useScrollPosition';
 import { theme } from '@/theme';
 
 const Navbar = () => {
+  const router = useRouter();
   const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(null);
   const currScrollPosition = useScrollPosition();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
 
   const handleCloseNavMenu = () => {
     setAnchorElNav(null);
+  };
+
+  const onLogoHandler = () => {
+    router.push('/');
   };
 
   return (
@@ -84,9 +91,9 @@ const Navbar = () => {
                   cursor: 'pointer',
                   marginRight: '35px',
                 }}
-                onClick={() => {}}
+                onClick={onLogoHandler}
               >
-                Logo
+                Logo2
               </Box>
               <NavMenu />
             </Box>

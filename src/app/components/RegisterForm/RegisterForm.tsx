@@ -1,20 +1,51 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect, useTransition } from 'react';
 
 import Link from 'next/link';
+import { redirect } from 'next/navigation';
 
-import { Button, TextField } from '@mui/material';
+import { yupResolver } from '@hookform/resolvers/yup';
+import { Button, CircularProgress, TextField, Typography } from '@mui/material';
 import Grid from '@mui/material/Grid2';
 import { Box, Container } from '@mui/system';
 import { Controller, useForm } from 'react-hook-form';
 
-const RegisterForm = () => {
-  const { handleSubmit, control } = useForm();
+import { registerUser } from '@/app/actions/registerUser';
+import { IRegisterForm } from '@/app/components/RegisterForm/types';
+import validationSchema from '@/app/components/RegisterForm/validation';
+import { useAuth } from '@/app/providers/authProvider';
 
-  const formSubmitHandler = (data: any) => {
-    console.log('data-register------', data);
+const RegisterForm = () => {
+  const { user, setUser } = useAuth();
+  const [isPending, startTransition] = useTransition();
+  const {
+    handleSubmit,
+    control,
+    formState: { errors },
+  } = useForm<IRegisterForm>({ resolver: yupResolver(validationSchema) });
+
+  useEffect(() => {
+    if (!!user) {
+      redirect('/');
+    }
+  }, [user]);
+
+  const formSubmitHandler = (data: IRegisterForm) => {
+    startTransition(() => {
+      registerUser(data).then((data) => {
+        setUser(data.user);
+      });
+    });
   };
+
+  if (isPending) {
+    return (
+      <Container component="main" maxWidth="sm" sx={{ display: 'flex', justifyContent: 'center' }}>
+        <CircularProgress />
+      </Container>
+    );
+  }
 
   return (
     <Container component="main" maxWidth="sm">
@@ -35,9 +66,13 @@ const RegisterForm = () => {
                 fullWidth
                 label="Email"
                 variant="standard"
+                error={!!errors.email}
               />
             )}
           />
+          <Typography variant="inherit" color="secondary">
+            {errors.email?.message}
+          </Typography>
         </Grid>
         <Grid size={12}>
           <Controller
@@ -45,9 +80,19 @@ const RegisterForm = () => {
             control={control}
             defaultValue=""
             render={({ field }) => (
-              <TextField {...field} fullWidth label="Password" type="password" variant="standard" />
+              <TextField
+                {...field}
+                fullWidth
+                label="Password"
+                type="password"
+                variant="standard"
+                error={!!errors.password}
+              />
             )}
           />
+          <Typography variant="inherit" color="secondary">
+            {errors.password?.message}
+          </Typography>
         </Grid>
         <Grid size={12}>
           <Box

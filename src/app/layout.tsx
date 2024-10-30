@@ -6,6 +6,7 @@ import { AppRouterCacheProvider } from '@mui/material-nextjs/v13-appRouter';
 
 import { StyledRoot } from '@/StyledRoot';
 import Navbar from '@/app/components/Navbar/Navbar';
+import AuthProvider from '@/app/providers/authProvider';
 
 export const metadata: Metadata = {
   title: 'Create Next App',
@@ -21,8 +22,10 @@ export default function RootLayout({
     <html lang="en">
       <body>
         <AppRouterCacheProvider>
-          <Navbar />
-          <StyledRoot>{children}</StyledRoot>
+          <AuthProvider>
+            <Navbar />
+            <StyledRoot>{children}</StyledRoot>
+          </AuthProvider>
         </AppRouterCacheProvider>
       </body>
     </html>

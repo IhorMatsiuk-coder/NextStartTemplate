@@ -22,8 +22,6 @@ const NavMenu = ({ isMobile, close }: INavMenu) => {
     close();
   };
 
-  console.log('pathname----', pathname);
-
   return (
     <Box
       onClick={menuHandleClick}
